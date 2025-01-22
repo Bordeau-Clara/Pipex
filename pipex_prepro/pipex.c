@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/01/21 14:19:28 by cbordeau         ###   LAUSANNE.ch       */
+/*   Updated: 2025/01/22 10:36:58 by cbordeau         ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-char		*find_path(char **env, char *cmd);
-void		execute_cmd(char *path, char *cmd, char **env);
+char		*find_path(t_struct args);
+void		execute_cmd(t_struct args);
 t_struct	init_args(int ac, char **av, char **env);
 void		child_process(t_struct args, int *pipefd);
 void		parent_process(t_struct args, int *pipefd);
@@ -59,26 +59,27 @@ int	main(int ac, char **av, char **env)
 	return (WEXITSTATUS(status));
 }
 
-/*void	parent_process(t_struct args, int *pipefd)
+/*void	parent_process(t_struct *args, int *pipefd)
 {
-	//args.save_pid[args.i - 2] = args.pid;
 	close(pipefd[1]);
-	args.last_fd = pipefd[0];
-	//close(pipefd[0]);
+	if (args->i != 2)
+		close(args->last_fd);
+	args->last_fd = pipefd[0];
+	args->i += 1;
 }*/
 
 void	child_process(t_struct args, int *pipefd)
 {
 	close(pipefd[0]);
 	free(args.save_pid);
-	args.path_cmd = find_path(args.env, args.av[args.i]);
+	args.path_cmd = find_path(args);
 	if (!args.path_cmd)
 		exit(127);
 	if (args.i == 2)
 	{
 		args.fd[0] = open(args.av[1], O_RDONLY);
 		if (args.fd[0] < 0)
-			return ;
+			(perror("open"), exit(EXIT_FAILURE));
 		(dup2(args.fd[0], STDIN_FILENO), close(args.fd[0]));
 	}
 	else
@@ -87,17 +88,12 @@ void	child_process(t_struct args, int *pipefd)
 	{
 		args.fd[1] = open(args.av[args.ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (args.fd[1] < 0)
-			return ;
+			(perror("open"), exit(EXIT_FAILURE));
 		(dup2(args.fd[1], STDOUT_FILENO), close(args.fd[1]), close(pipefd[1]));
 	}
 	else
-	{
-		//dprintf(2, "%d\n", pipefd[1]);
 		(dup2(pipefd[1], STDOUT_FILENO), close(pipefd[1]));
-	}
-	execute_cmd(args.path_cmd, args.av[args.i], args.env);
-	free(args.path_cmd);
-	free(args.save_pid);
+	execute_cmd(args);
 }
 
 t_struct	init_args(int ac, char **av, char **env)
@@ -112,7 +108,7 @@ t_struct	init_args(int ac, char **av, char **env)
 	return (args);
 }
 
-char	*find_path(char **env, char *cmd)
+char	*find_path(t_struct args)
 {
 	char	**path;
 	int		i;
@@ -120,7 +116,7 @@ char	*find_path(char **env, char *cmd)
 	char	**tab_cmd;
 
 	i = -1;
-	tab_cmd = ft_split(cmd, ' ');
+	tab_cmd = ft_split(args.av[args.i], ' ');
 	if (!tab_cmd)
 		return (NULL);
 	if (!access(tab_cmd[0], X_OK))
@@ -128,9 +124,9 @@ char	*find_path(char **env, char *cmd)
 		path_cmd = ft_strdup(tab_cmd[0]);
 		return (free(tab_cmd), path_cmd);
 	}
-	while (*env && !ft_strnstr(*env, "PATH=", 5))
-		env++;
-	path = ft_split(*env + 5, ':');
+	while (*args.env && !ft_strnstr(*args.env, "PATH=", 5))
+		args.env++;
+	path = ft_split(*args.env + 5, ':');
 	if (!path)
 		return (NULL);
 	while (path[++i])
@@ -142,18 +138,24 @@ char	*find_path(char **env, char *cmd)
 			path_cmd = ft_strdup(path[i]);
 			if (!path_cmd)
 				return (ft_freeall(path), NULL);
-			return (ft_freeall(path), path_cmd);
+			return (ft_freeall(path), ft_freeall(tab_cmd), path_cmd);
 		}
 	}
-	return (ft_freeall(path), NULL);
+	return (ft_freeall(path), ft_freeall(tab_cmd), NULL);
 }
 
-void	execute_cmd(char *path, char *cmd, char **env)
+void	execute_cmd(t_struct args)
 {
 	char	**split;
 
-	split = ft_split(cmd, ' ');
-	execve(path, split, env);
+	split = ft_split(args.av[args.i], ' ');
+	if (!split)
+		exit(127);
+	execve(args.path_cmd, split, args.env);
 	perror("execve");
+	(void)args.env;
+	free(args.path_cmd);
+	(void)args;
+	ft_freeall(split);
 	exit(EXIT_FAILURE);
 }
