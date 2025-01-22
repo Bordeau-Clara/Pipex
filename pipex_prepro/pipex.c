@@ -6,11 +6,12 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/01/22 10:55:55 by cbordeau         ###   LAUSANNE.ch       */
+/*   Updated: 2025/01/22 11:36:54 by cbordeau         ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include "Libft/libft.h"
 
 char		*find_path(t_struct args);
 void		execute_cmd(t_struct args);
@@ -97,6 +98,10 @@ t_struct	init_args(int ac, char **av, char **env)
 	args.save_pid = malloc((ac - 2) * sizeof(int));
 	args.av = av;
 	args.env = env;
+	if (!ft_strncmp(av[1], "here_doc", ft_strlen(av[1])))
+		args.here_doc = 1;
+	else
+		args.here_doc = 0;
 	return (args);
 }
 
