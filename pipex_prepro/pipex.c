@@ -6,28 +6,22 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/01/22 10:36:58 by cbordeau         ###   LAUSANNE.ch       */
+/*   Updated: 2025/01/22 10:55:55 by cbordeau         ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include "Libft/libft.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
 char		*find_path(t_struct args);
 void		execute_cmd(t_struct args);
 t_struct	init_args(int ac, char **av, char **env);
 void		child_process(t_struct args, int *pipefd);
-void		parent_process(t_struct args, int *pipefd);
+void		parent_process(t_struct *args, int *pipefd);
 
 int	main(int ac, char **av, char **env)
 {
 	int			pipefd[2];
 	t_struct	args;
-	int			status;
 	int			i;
 
 	if (ac < 5)
@@ -43,30 +37,27 @@ int	main(int ac, char **av, char **env)
 			(perror("fork"), exit(EXIT_FAILURE));
 		if (args.save_pid[args.i - 2] == 0)
 			child_process(args, pipefd);
-		//else
-			//parent_process(args, pipefd);
-		close(pipefd[1]);
-		if (args.i != 2)
-			close(args.last_fd);
-		args.last_fd = pipefd[0];
-		args.i += 1;
+		parent_process(&args, pipefd);
 	}
 	close(args.last_fd);
-	status = 0;
 	while (++i < ac - 3)
-		waitpid(args.save_pid[i], &status, 0);
+		waitpid(args.save_pid[i], &(args.status), 0);
 	free(args.save_pid);
-	return (WEXITSTATUS(status));
+	return (WEXITSTATUS(args.status));
 }
 
-/*void	parent_process(t_struct *args, int *pipefd)
+/*void	end_program(t_struct *args, int *pipefd)
+{
+}*/
+
+void	parent_process(t_struct *args, int *pipefd)
 {
 	close(pipefd[1]);
 	if (args->i != 2)
 		close(args->last_fd);
 	args->last_fd = pipefd[0];
 	args->i += 1;
-}*/
+}
 
 void	child_process(t_struct args, int *pipefd)
 {
@@ -86,7 +77,8 @@ void	child_process(t_struct args, int *pipefd)
 		(dup2(args.last_fd, STDIN_FILENO), close(args.last_fd));
 	if (args.i == args.ac - 2)
 	{
-		args.fd[1] = open(args.av[args.ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		args.fd[1] = open(args.av[args.ac - 1],
+				O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (args.fd[1] < 0)
 			(perror("open"), exit(EXIT_FAILURE));
 		(dup2(args.fd[1], STDOUT_FILENO), close(args.fd[1]), close(pipefd[1]));

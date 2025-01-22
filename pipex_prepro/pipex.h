@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:59:30 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/01/21 10:48:13 by cbordeau         ###   LAUSANNE.ch       */
+/*   Updated: 2025/01/22 10:53:18 by cbordeau         ###   LAUSANNE.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,14 @@ typedef struct s_struct
 {
 	int		ac;
 	int		i;
+	int		fd[2];
+	int		status;
 	char	**av;
 	char	**env;
+	char	*path_cmd;
 	pid_t	pid;
 	pid_t	*save_pid;
 	pid_t	last_fd;
-	int		fd[2];
-	char	*path_cmd;
 }t_struct;
 
 #endif
