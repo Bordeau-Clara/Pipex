@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 09:17:42 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/07 10:53:16 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/07 12:37:34 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	fail_exit(char *message, t_struct args, int *pipefd, int mode)
 	if (mode)
 		(close(pipefd[0]), close(pipefd[1]), perror(message), exit(FAILURE));
 	else
-		(perror("message"), exit(FAILURE));
+		(perror(message), exit(FAILURE));
 }
 
 int	max(char *s, char *limiter)
@@ -35,7 +35,7 @@ t_struct	init_args(int ac, char **av, char **env)
 	t_struct	args;
 
 	if (ac < 5)
-		(write(2, "Not enough arguments\n", 21), exit(FAILURE));
+		(write(2, WRONG_ARG, 21), exit(FAILURE));
 	if (!env)
 		(write(2, "No environment\n", 15), exit(FAILURE));
 	args.cmd = 0;
@@ -47,7 +47,7 @@ t_struct	init_args(int ac, char **av, char **env)
 	if (!ft_strncmp(av[1], "here_doc", ft_strlen(av[1])))
 	{
 		if (ac < 6)
-			(free(args.save_pid), write(2, "Wrong arguments\n", 16), exit(FAILURE));
+			(free(args.save_pid), write(2, WRONG_ARG, 21), exit(FAILURE));
 		args.here_doc = 1;
 		args.limiter = av[2];
 		args.n_cmd -= 1;

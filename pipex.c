@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/07 10:56:50 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/07 12:36:52 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,15 +104,18 @@ void	child_process(t_struct args, int *pipefd)
 	}
 	else
 		args.out_fd = pipefd[1];
-	(dup2(args.in_fd, STDIN_FILENO), dup2(args.out_fd, STDOUT_FILENO));
-	(close(pipefd[0]), close(args.in_fd), close(args.out_fd));
-	execute_cmd(args);
+	execute_cmd(args, pipefd);
 }
 
-void	execute_cmd(t_struct args)
+void	execute_cmd(t_struct args, int *pipefd)
 {
 	char	**split;
 
+	close(pipefd[0]);
+	dup2(args.in_fd, STDIN_FILENO);
+	dup2(args.out_fd, STDOUT_FILENO);
+	close(args.in_fd);
+	close(args.out_fd);
 	split = ft_split(args.av[args.cmd], ' ');
 	if (!split)
 	{

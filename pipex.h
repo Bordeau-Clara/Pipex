@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:59:30 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/07 09:26:51 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/07 12:35:14 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include "get_next_line.h"
 
 # define FAILURE 1
+# define WRONG_ARG "Not enough arguments\n"
 
 typedef struct s_struct
 {
@@ -46,7 +47,7 @@ typedef struct s_struct
 void		parent_process(t_struct *args, int *pipefd);
 void		here_doc(t_struct *args);
 void		child_process(t_struct args, int *pipefd);
-void		execute_cmd(t_struct args);
+void		execute_cmd(t_struct args, int *pipefd);
 
 t_struct	init_args(int ac, char **av, char **env);
 char		*find_path(t_struct args);
