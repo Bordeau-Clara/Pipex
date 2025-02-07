@@ -1,42 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memmove.c                                       :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cbordeau <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/08 14:23:22 by cbordeau          #+#    #+#             */
-/*   Updated: 2024/11/15 11:11:55 by cbordeau         ###   ########.fr       */
+/*   Created: 2024/11/23 18:09:16 by cbordeau          #+#    #+#             */
+/*   Updated: 2025/01/29 10:10:55 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "get_next_line.h"
 
-void	*ft_memmove(void *dest, const void *src, size_t n)
+char	*ft_strdup_gnl(char *s)
 {
+	char	*new;
 	size_t	i;
 
-	if (!dest && !src)
-		return (dest);
-	if (dest > src && (dest - src) < (((long)n)))
+	i = 0;
+	while (s[i])
+		i++;
+	new = (char *)malloc((i + 1) * sizeof(char));
+	if (new == NULL)
 	{
-		i = n - 1;
-		while (i >= 0)
-		{
-			((unsigned char *)dest)[i] = ((unsigned char *)src)[i];
-			if (i == 0)
-				break ;
-			i--;
-		}
+		free(s);
+		return (NULL);
 	}
-	else
+	i = 0;
+	while (s[i])
 	{
-		i = 0;
-		while (i < n)
-		{
-			((unsigned char *)dest)[i] = ((unsigned char *)src)[i];
-			i++;
-		}
+		new[i] = s[i];
+		i++;
 	}
-	return (dest);
+	new[i] = '\0';
+	return (new);
 }

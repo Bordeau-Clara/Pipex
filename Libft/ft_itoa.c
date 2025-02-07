@@ -41,13 +41,10 @@ char	*ft_itoa(int n)
 
 static char	*ft_fillnew(char *new, long nb, size_t len)
 {
-	long	sign;
-
 	if (nb < 0)
 	{
 		new[0] = '-';
 		nb = nb * (-1);
-		sign = -1;
 	}
 	if (nb >= 0 && nb <= 9)
 	{
