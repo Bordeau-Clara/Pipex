@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/15 13:14:42 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:35:25 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,9 @@ void	child_process(t_struct args, int *pipefd)
 	{
 		close(pipefd[1]);
 		if (args.here_doc)
-			args.out_fd = open(args.outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			args.out_fd = open(args.outfile, 02101, 0644);
 		else
-			args.out_fd = open(args.outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			args.out_fd = open(args.outfile, 01101, 0644);
 		if (args.out_fd < 0)
 			(free(args.path_cmd), fail_exit("open", args, pipefd, 1));
 	}
