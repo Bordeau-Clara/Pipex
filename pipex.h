@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:59:30 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/07 12:35:14 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/07 13:51:26 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void		child_process(t_struct args, int *pipefd);
 void		execute_cmd(t_struct args, int *pipefd);
 
 t_struct	init_args(int ac, char **av, char **env);
-char		*find_path(t_struct args);
+char		*find_path(t_struct args, int i);
 int			max(char *s, char *limiter);
 void		fail_exit(char *message, t_struct args, int *pipefd, int mode);
 

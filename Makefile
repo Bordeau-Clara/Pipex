@@ -6,7 +6,7 @@
 #    By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/15 08:41:31 by cbordeau          #+#    #+#              #
-#    Updated: 2025/02/07 09:18:09 by cbordeau         ###   ########.fr        #
+#    Updated: 2025/02/15 10:42:39 by cbordeau         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,4 +60,17 @@ vtest: all
 	cat outfile
 	echo $$?
 
+vtest2: all
+	rm -f outfile
+	@valgrind --trace-children=yes --track-fds=yes ./pipex infile \
+	"sleep 2" "ct" \
+	outfile 2>&1 | grep -E "errors from|heap|HEAP|open|Command|blocks" \
+	| GREP_COLORS='mt=1;4;32' grep --color=always -E "HEAP SUMMARY|$$" \
+	| GREP_COLORS='mt=1;4;31' grep --color=always -E "ERROR SUMMARY|$$" \
+	| GREP_COLORS='mt=1;4;33' grep --color=always -E "FILE DESCRIPTORS|$$" \
+	| GREP_COLORS='mt=1;4;36' grep --color=always -E "==.....==|$$" \
+	| GREP_COLORS='mt=1;5;35' grep --color=always -E "All heap blocks were freed -- no leaks are possible|$$"
+	@[ -r outfile ] && cat outfile || echo "outfile is missing or unreadable"
+	@echo "exit code :"
+	@echo $$?
 .PHONY : all clean fclean re

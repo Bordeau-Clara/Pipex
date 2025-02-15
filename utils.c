@@ -6,20 +6,28 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 09:17:42 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/07 12:37:34 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/15 12:05:03 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Libft/libft.h"
 #include "pipex.h"
+#include <stdio.h>
 
 void	fail_exit(char *message, t_struct args, int *pipefd, int mode)
 {
 	if (args.cmd != 0 || args.here_doc)
 		close(args.last_fd);
-	if (mode)
+	if (mode == 1)
 		(close(pipefd[0]), close(pipefd[1]), perror(message), exit(FAILURE));
-	else
+	if (mode == 0)
 		(perror(message), exit(FAILURE));
+	if (mode == 2)
+	{
+		write(2, "command not found: ", 19);
+		write(2, args.av[args.cmd], ft_strlen(args.av[args.cmd]));
+		(close(pipefd[0]), close(pipefd[1]), exit(FAILURE));
+	}
 }
 
 int	max(char *s, char *limiter)
@@ -59,22 +67,16 @@ t_struct	init_args(int ac, char **av, char **env)
 	return (args);
 }
 
-char	*find_path(t_struct args)
+char	*find_path(t_struct args, int i)
 {
 	char	**path;
-	int		i;
-	char	*path_cmd;
 	char	**tab_cmd;
 
-	i = -1;
 	tab_cmd = ft_split(args.av[args.cmd], ' ');
 	if (!tab_cmd)
 		return (NULL);
 	if (!access(tab_cmd[0], X_OK))
-	{
-		path_cmd = ft_strdup(tab_cmd[0]);
-		return (free(tab_cmd), path_cmd);
-	}
+		return (free(tab_cmd), ft_strdup(tab_cmd[0]));
 	while (*args.env && !ft_strnstr(*args.env, "PATH=", 5))
 		args.env++;
 	path = ft_split(*args.env + 5, ':');
@@ -89,13 +91,7 @@ char	*find_path(t_struct args)
 		if (!path[i])
 			return (ft_freeall(path), ft_freeall(tab_cmd), NULL);
 		if (!access(path[i], X_OK))
-		{
-			path_cmd = ft_strdup(path[i]);
-			if (!path_cmd)
-				return (ft_freeall(path), ft_freeall(tab_cmd), NULL);
-			return (ft_freeall(path), ft_freeall(tab_cmd), path_cmd);
-		}
+			return (ft_freeall(path), ft_freeall(tab_cmd), ft_strdup(path[i]));
 	}
-	perror("access");
 	return (ft_freeall(path), ft_freeall(tab_cmd), NULL);
 }

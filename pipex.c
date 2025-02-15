@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/07 12:36:52 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/15 09:34:59 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,9 @@ void	here_doc(t_struct *args)
 void	child_process(t_struct args, int *pipefd)
 {
 	free(args.save_pid);
-	args.path_cmd = find_path(args);
+	args.path_cmd = find_path(args, -1);
 	if (!args.path_cmd)
-		exit(127);
+		fail_exit("access", args, pipefd, 2);
 	if (args.cmd == 0 && !args.here_doc)
 	{
 		args.in_fd = open(args.infile, O_RDONLY);
