@@ -6,7 +6,7 @@
 /*   By: cbordeau <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 15:43:57 by cbordeau          #+#    #+#             */
-/*   Updated: 2024/11/09 15:52:54 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:21:06 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ char	*ft_strdup(const char *s)
 	size_t	i;
 
 	i = 0;
+	if (!s)
+		return (NULL);
 	while (s[i])
 		i++;
 	new = (char *)malloc((i + 1) * sizeof(char));

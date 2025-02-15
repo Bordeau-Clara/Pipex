@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 09:17:42 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/15 12:05:03 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:26:23 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,17 @@ t_struct	init_args(int ac, char **av, char **env)
 	return (args);
 }
 
+char	*find_path2(char **path, char **tab_cmd, int i)
+{
+	path[i] = ft_strjoin(path[i], "/");
+	if (!path[i])
+		return (NULL);
+	path[i] = ft_strjoin(path[i], tab_cmd[0]);
+	if (!path[i])
+		return (NULL);
+	return (path[i]);
+}
+
 char	*find_path(t_struct args, int i)
 {
 	char	**path;
@@ -76,7 +87,10 @@ char	*find_path(t_struct args, int i)
 	if (!tab_cmd)
 		return (NULL);
 	if (!access(tab_cmd[0], X_OK))
-		return (free(tab_cmd), ft_strdup(tab_cmd[0]));
+	{
+		args.path_cmd = ft_strdup(tab_cmd[0]);
+		return (free(tab_cmd), args.path_cmd);
+	}
 	while (*args.env && !ft_strnstr(*args.env, "PATH=", 5))
 		args.env++;
 	path = ft_split(*args.env + 5, ':');
@@ -84,14 +98,42 @@ char	*find_path(t_struct args, int i)
 		return (ft_freeall(tab_cmd), NULL);
 	while (path[++i])
 	{
-		path[i] = ft_strjoin(path[i], "/");
-		if (!path[i])
-			return (ft_freeall(path), ft_freeall(tab_cmd), NULL);
-		path[i] = ft_strjoin(path[i], tab_cmd[0]);
+		path[i] = find_path2(path, tab_cmd, i);
+		if (!path[i] || !access(path[i], X_OK))
+			break ;
+	}
+	args.path_cmd = ft_strdup(path[i]);
+	return (ft_freeall(path), ft_freeall(tab_cmd), args.path_cmd);
+}
+
+/*char	*find_path(t_struct args, int i)
+{
+	char	**path;
+	char	**tab_cmd;
+
+	tab_cmd = ft_split(args.av[args.cmd], ' ');
+	if (!tab_cmd)
+		return (NULL);
+	if (!access(tab_cmd[0], X_OK))
+	{
+		args.path_cmd = ft_strdup(tab_cmd[0]);
+		return (free(tab_cmd), args.path_cmd);
+	}
+	while (*args.env && !ft_strnstr(*args.env, "PATH=", 5))
+		args.env++;
+	path = ft_split(*args.env + 5, ':');
+	if (!path)
+		return (ft_freeall(tab_cmd), NULL);
+	while (path[++i])
+	{
+		path[i] = find_path2(path, tab_cmd, i);
 		if (!path[i])
 			return (ft_freeall(path), ft_freeall(tab_cmd), NULL);
 		if (!access(path[i], X_OK))
-			return (ft_freeall(path), ft_freeall(tab_cmd), ft_strdup(path[i]));
+		{
+			args.path_cmd = ft_strdup(path[i]);
+			return (ft_freeall(path), ft_freeall(tab_cmd), args.path_cmd);
+		}
 	}
 	return (ft_freeall(path), ft_freeall(tab_cmd), NULL);
-}
+}*/

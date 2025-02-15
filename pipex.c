@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/15 09:34:59 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:14:42 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	child_process(t_struct args, int *pipefd)
 	{
 		args.in_fd = open(args.infile, O_RDONLY);
 		if (args.in_fd < 0)
-			(ft_freeall(&args.path_cmd), fail_exit("open", args, pipefd, 1));
+			(free(args.path_cmd), fail_exit("open", args, pipefd, 1));
 	}
 	else
 		args.in_fd = args.last_fd;
@@ -100,7 +100,7 @@ void	child_process(t_struct args, int *pipefd)
 		else
 			args.out_fd = open(args.outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (args.out_fd < 0)
-			(ft_freeall(&args.path_cmd), fail_exit("open", args, pipefd, 1));
+			(free(args.path_cmd), fail_exit("open", args, pipefd, 1));
 	}
 	else
 		args.out_fd = pipefd[1];
