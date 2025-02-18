@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 09:17:42 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/15 14:51:35 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/18 08:09:21 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	fail_exit(char *message, t_struct args, int *pipefd, int mode)
 		write(2, "command not found: ", 19);
 		write(2, args.av[args.cmd], ft_strlen(args.av[args.cmd]));
 		write(2, "\n", 1);
+		(close(args.in_fd), close(args.out_fd));
 		(close(pipefd[0]), close(pipefd[1]), exit(127));
 	}
 }

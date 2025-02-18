@@ -6,7 +6,7 @@
 #    By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/15 08:41:31 by cbordeau          #+#    #+#              #
-#    Updated: 2025/02/15 12:18:24 by cbordeau         ###   ########.fr        #
+#    Updated: 2025/02/18 08:27:25 by cbordeau         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,7 +63,7 @@ vtest: all
 vtest2: all
 	rm -f outfile
 	@valgrind --trace-children=yes --track-fds=yes ./pipex infile \
-	"sleep 2" "cat" \
+	"cat" "fsfdsfd" \
 	outfile 2>&1 | grep -E "errors from|heap|HEAP|open|Command|blocks" \
 	| GREP_COLORS='mt=1;4;32' grep --color=always -E "HEAP SUMMARY|$$" \
 	| GREP_COLORS='mt=1;4;31' grep --color=always -E "ERROR SUMMARY|$$" \

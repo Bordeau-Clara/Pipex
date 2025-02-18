@@ -6,7 +6,7 @@
 /*   By: cbordeau <cbordeau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:55:39 by cbordeau          #+#    #+#             */
-/*   Updated: 2025/02/15 13:35:25 by cbordeau         ###   ########.fr       */
+/*   Updated: 2025/02/18 08:46:59 by cbordeau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,6 @@ void	here_doc(t_struct *args)
 void	child_process(t_struct args, int *pipefd)
 {
 	free(args.save_pid);
-	args.path_cmd = find_path(args, -1);
-	if (!args.path_cmd)
-		fail_exit("access", args, pipefd, 2);
 	if (args.cmd == 0 && !args.here_doc)
 	{
 		args.in_fd = open(args.infile, O_RDONLY);
@@ -96,9 +93,11 @@ void	child_process(t_struct args, int *pipefd)
 	{
 		close(pipefd[1]);
 		if (args.here_doc)
-			args.out_fd = open(args.outfile, 02101, 0644);
+			args.out_fd
+				= open(args.outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else
-			args.out_fd = open(args.outfile, 01101, 0644);
+			args.out_fd
+				= open(args.outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (args.out_fd < 0)
 			(free(args.path_cmd), fail_exit("open", args, pipefd, 1));
 	}
@@ -111,6 +110,9 @@ void	execute_cmd(t_struct args, int *pipefd)
 {
 	char	**split;
 
+	args.path_cmd = find_path(args, -1);
+	if (!args.path_cmd)
+		fail_exit("access", args, pipefd, 2);
 	close(pipefd[0]);
 	dup2(args.in_fd, STDIN_FILENO);
 	dup2(args.out_fd, STDOUT_FILENO);
